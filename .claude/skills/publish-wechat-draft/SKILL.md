@@ -1,7 +1,20 @@
 ---
 name: publish-wechat-draft
 description: 发布文章到微信公众号草稿箱。当用户要求发布公众号文章、保存微信草稿、publish wechat draft、或提到"发公众号"/"发微信"时调用。
+version: 1.0.0
 tools: Read, Bash, Edit, Write
+metadata:
+  openclaw:
+    requires:
+      env:
+        - WECHAT_PUBLISHER_DIR
+      bins:
+        - node
+        - npm
+        - npx
+        - git
+    primaryEnv: WECHAT_PUBLISHER_DIR
+    homepage: https://github.com/lixinran2015/weixingongzhonghao
 ---
 
 # 微信公众号草稿发布 Skill
