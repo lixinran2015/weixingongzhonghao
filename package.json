@@ -1,0 +1,30 @@
+{
+  "name": "weixingongzhonghao-publisher",
+  "version": "1.0.0",
+  "description": "微信公众号图文自动发布到草稿箱工具",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "publish": "npm run build && node dist/index.js publish",
+    "check:login": "npm run build && node dist/index.js check-login"
+  },
+  "keywords": [
+    "weixingongzhonghao",
+    "wechat-mp",
+    "playwright",
+    "publisher"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^25.6.0",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "playwright": "^1.59.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "yaml": "^2.8.3"
+  }
+}

@@ -1,0 +1,21 @@
+article:
+  title: "A股短线龙头日报 · 2026-04-15"
+  # content 可以是纯文本，也可以是 HTML/MD 文件路径
+  content: "./articles/2026-04-15.html"
+  # cover: "./covers/cover.jpg"
+  summary: "A股短线龙头日报 · 2026-04-15"
+  author: ""
+  original: false
+
+settings:
+  headless: false      # 设为 true 则不显示浏览器窗口
+  slowMo: 500          # 操作延迟（毫秒），调试时建议设置
+  timeout: 120000      # 全局超时（毫秒）
+  viewport:
+    width: 1920
+    height: 1080
+
+output:
+  logDir: "./logs"
+  reportDir: "./reports"
+  screenshots: true

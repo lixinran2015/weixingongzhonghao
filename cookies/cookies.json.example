@@ -1,0 +1,14 @@
+[
+  {
+    "name": "wxtokenkey",
+    "value": "your-token-value",
+    "domain": "mp.weixin.qq.com",
+    "path": "/"
+  },
+  {
+    "name": "wxuin",
+    "value": "your-uid",
+    "domain": "mp.weixin.qq.com",
+    "path": "/"
+  }
+]

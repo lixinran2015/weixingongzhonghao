@@ -1,0 +1,8 @@
+node_modules/
+.claude/
+logs/
+dist/
+reports/
+cookies/cookies.json
+*.log
+.DS_Store

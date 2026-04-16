@@ -1,0 +1,21 @@
+article:
+  title: "示例文章标题"
+  # content 可以是纯文本，也可以是 HTML/MD 文件路径
+  content: "./articles/example.html"
+  cover: "./covers/cover.jpg"
+  summary: "这是一段文章摘要，会在分享时显示"
+  author: "作者名"
+  original: true
+
+settings:
+  headless: false      # 设为 true 则不显示浏览器窗口
+  slowMo: 500          # 操作延迟（毫秒），调试时建议设置
+  timeout: 120000      # 全局超时（毫秒）
+  viewport:
+    width: 1920
+    height: 1080
+
+output:
+  logDir: "./logs"
+  reportDir: "./reports"
+  screenshots: true
