@@ -16,6 +16,41 @@
 
 ---
 
+## Claude Code Skill（自然语言发布）
+
+本项目已内置 Claude Code Skill，支持用自然语言直接发布文章到微信公众号草稿箱。
+
+### 安装 Skill（全局可用）
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lixinran2015/weixingongzhonghao/main/install-skill.sh | bash
+```
+
+安装后，在任何目录打开 Claude Code，直接说：
+
+> "把这篇文章发到微信草稿"
+> "publish wechat draft"
+
+Claude 会自动：
+1. 查找 `weixingongzhonghao-publisher` 项目目录
+2. 检查 Cookie 登录状态（失效时引导扫码）
+3. 执行发布并反馈草稿链接
+
+### 项目目录查找规则
+
+Skill 按以下顺序查找项目：
+1. 当前工作目录
+2. `WECHAT_PUBLISHER_DIR` 环境变量
+3. `~/workspace/weixingongzhonghao` 或 `~/weixingongzhonghao`
+
+你也可以直接克隆仓库后在项目内使用（无需全局安装）：
+```bash
+git clone https://github.com/lixinran2015/weixingongzhonghao.git
+cd weixingongzhonghao
+```
+
+---
+
 ## 快速开始
 
 ### 1. 安装依赖
