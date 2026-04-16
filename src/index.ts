@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import path from 'path';
 import { loadConfig } from './utils/config-loader.js';
 import { Publisher } from './core/publisher.js';
-import { chromium, type Browser, type Page } from 'playwright';
+import { chromium } from 'playwright';
 import { CookieManager } from './auth/cookie-manager.js';
 import fs from 'fs/promises';
 
@@ -21,8 +21,11 @@ function resolveCookiePath(optionPath?: string): string {
   return path.join(process.cwd(), 'cookies', 'cookies.json');
 }
 
-async function performLogin(cookiePath: string): Promise<void> {
-  console.log(chalk.blue('🔓 未检测到有效登录，准备打开浏览器扫码登录...'));
+async function performLogin(cookiePath: string, reason?: string): Promise<void> {
+  if (reason) {
+    console.log(chalk.blue(reason));
+  }
+  console.log(chalk.blue('🔓 打开浏览器等待扫码登录...'));
   console.log(chalk.yellow('   请在弹出的浏览器窗口中，使用微信扫码登录公众号平台'));
 
   const browser = await chromium.launch({
@@ -50,7 +53,7 @@ async function performLogin(cookiePath: string): Promise<void> {
       const content = document.body?.innerText || '';
       return !url.includes('/cgi-bin/loginpage') && (content.includes('新的创作') || content.includes('图文消息'));
     },
-    { timeout: 300000, polling: 2000 }
+    { timeout: 300000, polling: 500 }
   );
 
   await page.waitForTimeout(3000);
@@ -71,27 +74,29 @@ async function ensureLogin(cookiePath: string): Promise<void> {
   if (isValid) {
     // 快速验证 cookie 是否真的有效
     const browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
-    const page = await context.newPage();
-    const cookies = await cookieManager.loadCookies();
-    await context.addCookies(cookies);
+    try {
+      const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+      const page = await context.newPage();
+      const cookies = await cookieManager.loadCookies();
+      await context.addCookies(cookies);
 
-    await page.goto('https://mp.weixin.qq.com/', { waitUntil: 'load', timeout: 60000 });
-    await page.waitForTimeout(3000);
+      await page.goto('https://mp.weixin.qq.com/', { waitUntil: 'load', timeout: 60000 });
+      await page.waitForTimeout(3000);
 
-    const currentUrl = page.url();
-    const pageContent = await page.content();
-    const isLoggedIn = !currentUrl.includes('/cgi-bin/loginpage') &&
-      (pageContent.includes('新的创作') || pageContent.includes('图文消息'));
+      const currentUrl = page.url();
+      const pageContent = await page.content();
+      const isLoggedIn = !currentUrl.includes('/cgi-bin/loginpage') &&
+        (pageContent.includes('新的创作') || pageContent.includes('图文消息'));
 
-    await browser.close();
-
-    if (isLoggedIn) {
-      return;
+      if (isLoggedIn) {
+        return;
+      }
+    } finally {
+      await browser.close();
     }
   }
 
-  await performLogin(cookiePath);
+  await performLogin(cookiePath, '⏳ 未检测到有效登录，等待扫码登录...');
 }
 
 program

@@ -14,7 +14,7 @@ export class CookieManager {
   async saveCookies(cookies: Cookie[]): Promise<void> {
     const dir = path.dirname(this.cookiePath);
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(this.cookiePath, JSON.stringify(cookies, null, 2), 'utf-8');
+    await fs.writeFile(this.cookiePath, JSON.stringify(cookies, null, 2), { encoding: 'utf-8', mode: 0o600 });
   }
 
   async loadCookies(): Promise<Cookie[]> {
