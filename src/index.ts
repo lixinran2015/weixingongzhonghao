@@ -7,6 +7,7 @@ import { loadConfig } from './utils/config-loader.js';
 import { Publisher } from './core/publisher.js';
 import { chromium } from 'playwright';
 import { CookieManager } from './auth/cookie-manager.js';
+import fs from 'fs/promises';
 
 const program = new Command();
 
@@ -18,14 +19,53 @@ program
 program
   .command('publish')
   .description('发布图文到微信公众号草稿箱')
-  .requiredOption('-c, --config <path>', '配置文件路径')
+  .option('-c, --config <path>', '配置文件路径')
+  .option('-f, --file <path>', '文章 HTML 文件路径')
+  .option('-t, --title <title>', '文章标题（不传则自动读取 HTML <title> 或文件名）')
   .option('--debug', '调试模式（显示浏览器窗口）')
   .action(async (options) => {
     try {
-      const configPath = path.resolve(options.config);
+      let config: import('./types/index.js').ArticleConfig;
 
-      console.log(chalk.blue('📋 加载配置文件...'));
-      const config = await loadConfig(configPath);
+      if (options.config) {
+        const configPath = path.resolve(options.config);
+        console.log(chalk.blue('📋 加载配置文件...'));
+        config = await loadConfig(configPath);
+      } else if (options.file) {
+        const filePath = path.resolve(options.file);
+        let title = options.title;
+        if (!title) {
+          try {
+            const html = await fs.readFile(filePath, 'utf-8');
+            const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+            title = match?.[1]?.trim() || path.basename(filePath, '.html');
+          } catch {
+            title = path.basename(filePath, '.html');
+          }
+        }
+        config = {
+          article: {
+            title,
+            content: filePath,
+            summary: title,
+            author: '',
+            original: false,
+          },
+          settings: {
+            headless: true,
+            slowMo: 0,
+            timeout: 120000,
+            viewport: { width: 1920, height: 1080 },
+          },
+          output: {
+            logDir: './logs',
+            reportDir: './reports',
+            screenshots: true,
+          },
+        };
+      } else {
+        throw new Error('请提供 --config <path> 或 --file <path> 参数');
+      }
 
       if (options.debug) {
         config.settings.headless = false;
