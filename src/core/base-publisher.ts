@@ -51,7 +51,7 @@ export abstract class BasePublisher {
   protected async authenticate(): Promise<void> {
     this.logger.info('加载 Cookie...');
 
-    const cookiePath = path.join(process.cwd(), 'cookies', 'cookies.json');
+    const cookiePath = this.config.cookiePath || path.join(process.cwd(), 'cookies', 'cookies.json');
     const cookieManager = new CookieManager(cookiePath, 'mp.weixin.qq.com');
 
     const isValid = await cookieManager.validateCookies();

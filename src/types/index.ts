@@ -27,6 +27,7 @@ export interface ArticleConfig {
   article: ArticleInfo;
   settings: Settings;
   output: OutputConfig;
+  cookiePath?: string;
 }
 
 export interface PublishResult {

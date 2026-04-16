@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import path from 'path';
 import type { Cookie } from 'playwright';
 
 export class CookieManager {
@@ -8,6 +9,12 @@ export class CookieManager {
   constructor(cookiePath: string, defaultDomain: string = 'mp.weixin.qq.com') {
     this.cookiePath = cookiePath;
     this.defaultDomain = defaultDomain;
+  }
+
+  async saveCookies(cookies: Cookie[]): Promise<void> {
+    const dir = path.dirname(this.cookiePath);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(this.cookiePath, JSON.stringify(cookies, null, 2), 'utf-8');
   }
 
   async loadCookies(): Promise<Cookie[]> {

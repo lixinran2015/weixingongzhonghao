@@ -8,6 +8,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "publish": "npm run build && node dist/index.js publish",
+    "login": "npm run build && node dist/index.js login",
     "check:login": "npm run build && node dist/index.js check-login"
   },
   "keywords": [

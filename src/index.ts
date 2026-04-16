@@ -5,11 +5,94 @@ import chalk from 'chalk';
 import path from 'path';
 import { loadConfig } from './utils/config-loader.js';
 import { Publisher } from './core/publisher.js';
-import { chromium } from 'playwright';
+import { chromium, type Browser, type Page } from 'playwright';
 import { CookieManager } from './auth/cookie-manager.js';
 import fs from 'fs/promises';
 
 const program = new Command();
+
+function resolveCookiePath(optionPath?: string): string {
+  if (optionPath) return path.resolve(optionPath);
+  if (process.env.WECHAT_COOKIE_PATH) return path.resolve(process.env.WECHAT_COOKIE_PATH);
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  if (homeDir) {
+    return path.join(homeDir, '.config', 'weixingongzhonghao', 'cookies.json');
+  }
+  return path.join(process.cwd(), 'cookies', 'cookies.json');
+}
+
+async function performLogin(cookiePath: string): Promise<void> {
+  console.log(chalk.blue('🔓 未检测到有效登录，准备打开浏览器扫码登录...'));
+  console.log(chalk.yellow('   请在弹出的浏览器窗口中，使用微信扫码登录公众号平台'));
+
+  const browser = await chromium.launch({
+    headless: false,
+    slowMo: 100,
+  });
+
+  const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
+  });
+
+  const page = await context.newPage();
+
+  await page.goto('https://mp.weixin.qq.com/', {
+    waitUntil: 'load',
+    timeout: 120000,
+  });
+
+  console.log(chalk.blue('⏳ 等待扫码登录...'));
+
+  // 等待登录成功：URL 不再是登录页，或者页面出现"新的创作"
+  await page.waitForFunction(
+    () => {
+      const url = window.location.href;
+      const content = document.body?.innerText || '';
+      return !url.includes('/cgi-bin/loginpage') && (content.includes('新的创作') || content.includes('图文消息'));
+    },
+    { timeout: 300000, polling: 2000 }
+  );
+
+  await page.waitForTimeout(3000);
+
+  const cookies = await context.cookies();
+  const cookieManager = new CookieManager(cookiePath, 'mp.weixin.qq.com');
+  await cookieManager.saveCookies(cookies);
+
+  console.log(chalk.green(`✅ 登录成功，Cookie 已保存到: ${cookiePath}`));
+
+  await browser.close();
+}
+
+async function ensureLogin(cookiePath: string): Promise<void> {
+  const cookieManager = new CookieManager(cookiePath, 'mp.weixin.qq.com');
+  const isValid = await cookieManager.validateCookies();
+
+  if (isValid) {
+    // 快速验证 cookie 是否真的有效
+    const browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+    const page = await context.newPage();
+    const cookies = await cookieManager.loadCookies();
+    await context.addCookies(cookies);
+
+    await page.goto('https://mp.weixin.qq.com/', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(3000);
+
+    const currentUrl = page.url();
+    const pageContent = await page.content();
+    const isLoggedIn = !currentUrl.includes('/cgi-bin/loginpage') &&
+      (pageContent.includes('新的创作') || pageContent.includes('图文消息'));
+
+    await browser.close();
+
+    if (isLoggedIn) {
+      return;
+    }
+  }
+
+  await performLogin(cookiePath);
+}
 
 program
   .name('weixingongzhonghao-publisher')
@@ -22,15 +105,20 @@ program
   .option('-c, --config <path>', '配置文件路径')
   .option('-f, --file <path>', '文章 HTML 文件路径')
   .option('-t, --title <title>', '文章标题（不传则自动读取 HTML <title> 或文件名）')
+  .option('--cookie <path>', 'Cookie 文件路径')
   .option('--debug', '调试模式（显示浏览器窗口）')
   .action(async (options) => {
     try {
+      const cookiePath = resolveCookiePath(options.cookie);
+      await ensureLogin(cookiePath);
+
       let config: import('./types/index.js').ArticleConfig;
 
       if (options.config) {
         const configPath = path.resolve(options.config);
         console.log(chalk.blue('📋 加载配置文件...'));
         config = await loadConfig(configPath);
+        config.cookiePath = cookiePath;
       } else if (options.file) {
         const filePath = path.resolve(options.file);
         let title = options.title;
@@ -62,6 +150,7 @@ program
             reportDir: './reports',
             screenshots: true,
           },
+          cookiePath,
         };
       } else {
         throw new Error('请提供 --config <path> 或 --file <path> 参数');
@@ -100,17 +189,36 @@ program
   });
 
 program
+  .command('login')
+  .description('打开浏览器扫码登录微信公众号，并保存 Cookie')
+  .option('--cookie <path>', 'Cookie 保存路径')
+  .action(async (options) => {
+    try {
+      const cookiePath = resolveCookiePath(options.cookie);
+      await performLogin(cookiePath);
+      process.exit(0);
+    } catch (error) {
+      console.error(chalk.red('💥 登录失败'));
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
   .command('check-login')
   .description('检查 Cookie 登录状态')
+  .option('--cookie <path>', 'Cookie 文件路径')
   .option('--debug', '调试模式（显示浏览器窗口）')
   .action(async (options) => {
     try {
-      const cookiePath = path.join(process.cwd(), 'cookies', 'cookies.json');
+      const cookiePath = resolveCookiePath(options.cookie);
       const cookieManager = new CookieManager(cookiePath, 'mp.weixin.qq.com');
 
       const isValid = await cookieManager.validateCookies();
       if (!isValid) {
         console.log(chalk.red('❌ Cookie 文件无效或为空'));
+        console.log(chalk.yellow(`   预期路径: ${cookiePath}`));
+        console.log(chalk.blue('   提示: 运行 npm run login 进行扫码登录'));
         process.exit(1);
       }
 
@@ -141,6 +249,7 @@ program
 
       if (currentUrl.includes('/cgi-bin/loginpage')) {
         console.log(chalk.red('❌ Cookie 已失效，页面被重定向到登录页'));
+        console.log(chalk.blue('   提示: 运行 npm run login 进行扫码登录'));
         await browser.close();
         process.exit(1);
       }
