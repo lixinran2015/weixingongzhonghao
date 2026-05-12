@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LLM Wiki 实战：方法论与知识图谱</title>
+  <!-- 公众号编辑器通常丢弃 &lt;style&gt;，正文样式已全部写在各标签 style 内。本地预览同样生效。 -->
+</head>
+<body style="margin:0;padding:20px 12px 40px;background-color:#fafafa;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:#1a1a1a;line-height:1.82;-webkit-font-smoothing:antialiased;">
+  <section style="max-width:680px;margin:0 auto;background-color:#ffffff;padding:32px 22px 40px;border:1px solid #eeeeee;border-radius:2px;box-sizing:border-box;">
+
+    <p style="margin:0 0 10px;font-size:12px;color:#c44536;letter-spacing:0.1em;font-weight:600;">第二大脑 · 实战指南</p>
+    <h1 style="margin:0 0 16px;font-size:24px;line-height:1.4;font-weight:700;color:#1a1a1a;">LLM Wiki：方法论与知识图谱</h1>
+    <p style="margin:0 0 18px;text-align:center;">
+      <img src="assets/wechat-cover-llm-wiki-article.png" alt="公众号封面配图：知识节点与连线，墨绿与纸灰色调" width="1376" height="768" style="width:100%;max-width:680px;height:auto;display:block;margin:0 auto;border-radius:8px;border:1px solid #e8edf3;box-sizing:border-box;" />
+    </p>
+    <p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#667085;text-align:center;">上图可作公众号首图或分享卡片；上传后台时请用高清原文件（见同目录 <span style="font-family:Consolas,Monaco,monospace;font-size:12px;">assets/wechat-cover-llm-wiki-article.png</span>）。</p>
+    <p style="margin:0 0 22px;font-size:16px;line-height:1.75;color:#333333;">处理 5000+ 篇笔记后总结的实战经验。理论是别人的，坑是自己的。</p>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 1：基于 Wiki 的 LLM 目录方法</h2>
+    <p style="margin:0 0 12px;font-size:16px;line-height:1.75;color:#333333;">用<strong style="color:#1a3328;">四个目录 + 一份规则</strong>把「原件、知识、临时产出」和「AI 怎么动手」拆开；下面是结构示意（与 Part 2 真实实现可一一对照）。</p>
+
+    <section style="margin:14px 0;padding:18px 16px;background-color:#f3f5f4;border:1px solid #dfe4e0;border-radius:12px;box-sizing:border-box;">
+      <table cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="width:28%;vertical-align:middle;text-align:center;padding:4px;">
+            <div style="background-color:#e4eaec;border:1px solid #9aa8b0;border-radius:10px;padding:18px 10px;color:#1e293b;text-align:center;">
+              <p style="margin:0 0 10px;font-size:19px;font-weight:700;letter-spacing:0.02em;color:#1a3328;">raw/</p>
+              <p style="margin:0 0 6px;font-size:16px;font-weight:600;color:#334155;">原始资料</p>
+              <p style="margin:0;font-size:14px;line-height:1.5;color:#64748b;">飞书、网页、PDF</p>
+            </div>
+          </td>
+          <td style="width:8%;text-align:center;vertical-align:middle;color:#94a3b8;font-size:22px;font-weight:400;padding:0 2px;">→</td>
+          <td style="width:28%;vertical-align:middle;text-align:center;padding:4px;">
+            <div style="background-color:#dbe6df;border:1px solid #7d9a86;border-radius:10px;padding:18px 10px;color:#1a3328;text-align:center;">
+              <p style="margin:0 0 10px;font-size:19px;font-weight:700;letter-spacing:0.02em;color:#1a3328;">wiki/</p>
+              <p style="margin:0 0 6px;font-size:16px;font-weight:600;color:#274a38;">知识层</p>
+              <p style="margin:0;font-size:14px;line-height:1.5;color:#4a6352;">按主题整理</p>
+            </div>
+          </td>
+          <td style="width:8%;text-align:center;vertical-align:middle;color:#94a3b8;font-size:22px;font-weight:400;padding:0 2px;">→</td>
+          <td style="width:28%;vertical-align:middle;text-align:center;padding:4px;">
+            <div style="background-color:#ebe6df;border:1px solid #b5a896;border-radius:10px;padding:18px 10px;color:#3f3429;text-align:center;">
+              <p style="margin:0 0 10px;font-size:19px;font-weight:700;letter-spacing:0.02em;color:#1a3328;">outputs/</p>
+              <p style="margin:0 0 6px;font-size:16px;font-weight:600;color:#4a4035;">工作台</p>
+              <p style="margin:0;font-size:14px;line-height:1.5;color:#6b5f52;">临时结论、简报</p>
+            </div>
+          </td>
+        </tr>
+        <tr><td colspan="5" style="height:14px;font-size:0;line-height:0;">&nbsp;</td></tr>
+        <tr>
+          <td colspan="5" style="padding:4px;vertical-align:middle;">
+            <div style="background-color:#dde5e1;border:1px solid #6b7f76;border-radius:10px;padding:18px 16px;color:#1a3328;text-align:center;">
+              <p style="margin:0 0 8px;font-size:19px;font-weight:700;letter-spacing:0.02em;color:#1a3328;">CLAUDE.md</p>
+              <p style="margin:0;font-size:15px;line-height:1.65;color:#475569;">告诉 AI 怎么组织这套系统的规则文件</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <p style="margin:12px 0 0;font-size:16px;line-height:1.75;color:#333333;"><strong style="color:#1a1a1a;">一句话：</strong>原件落 <span style="font-family:Consolas,monospace;color:#3d5a52;font-weight:600;">raw/</span>，可沉淀知识落 <span style="font-family:Consolas,monospace;color:#1a3328;font-weight:600;">wiki/</span>，草稿与简报落 <span style="font-family:Consolas,monospace;color:#6b5344;font-weight:600;">outputs/</span>；边界与流程写在 <span style="font-family:Consolas,monospace;color:#3f5249;font-weight:600;">CLAUDE.md</span>（亦可用 AGENTS.md 等同类文件）。</p>
+
+    <p style="text-align:center;margin:36px 0;color:#cbd5e1;font-size:18px;letter-spacing:10px;">* * *</p>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 2：系统架构（真实实现）</h2>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.75;color:#333333;">这是我们实际部署的架构，不是概念图，是跑在生产环境的代码结构。</p>
+
+        <section style="margin:20px 0;text-align:center;">
+      <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LLM Wiki 数据架构" style="width:100%;max-width:640px;height:auto;display:block;margin:0 auto;background-color:#fafafa;border:1px solid #e8edf3;border-radius:8px;box-sizing:border-box;" font-family="-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif">
+        <defs>
+          <filter id="boxShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.08"/>
+          </filter>
+          <marker id="arrowHead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/>
+          </marker>
+        </defs>
+        <rect width="640" height="280" fill="#fafafa" rx="8"/>
+
+        <!-- 第一层: Source -->
+        <g filter="url(#boxShadow)">
+          <rect x="30" y="110" width="100" height="60" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <text x="80" y="135" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">Source</text>
+          <text x="80" y="155" text-anchor="middle" fill="#64748b" font-size="11">原始内容</text>
+        </g>
+
+        <!-- 箭头1 -->
+        <line x1="130" y1="140" x2="160" y2="140" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+        <text x="145" y="132" text-anchor="middle" fill="#94a3b8" font-size="10">LLM提取</text>
+
+        <!-- 第二层: Entity -->
+        <g filter="url(#boxShadow)">
+          <rect x="170" y="110" width="100" height="60" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <text x="220" y="135" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">Entity</text>
+          <text x="220" y="155" text-anchor="middle" fill="#64748b" font-size="11">概念实体</text>
+        </g>
+
+        <!-- 箭头2 -->
+        <line x1="270" y1="140" x2="300" y2="140" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+        <text x="285" y="132" text-anchor="middle" fill="#94a3b8" font-size="10">生成</text>
+
+        <!-- 第三层: WikiPage -->
+        <g filter="url(#boxShadow)">
+          <rect x="310" y="70" width="110" height="80" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <text x="365" y="95" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">WikiPage</text>
+          <text x="365" y="115" text-anchor="middle" fill="#64748b" font-size="11">Source Wiki</text>
+          <text x="365" y="132" text-anchor="middle" fill="#64748b" font-size="11">Concept Wiki</text>
+        </g>
+
+        <!-- 箭头3 (分支到 WikiLink) -->
+        <line x1="365" y1="150" x2="365" y2="175" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+
+        <!-- 第四层: WikiLink -->
+        <g filter="url(#boxShadow)">
+          <rect x="310" y="185" width="110" height="60" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <text x="365" y="210" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">WikiLink</text>
+          <text x="365" y="230" text-anchor="middle" fill="#64748b" font-size="11">双向链接</text>
+        </g>
+
+        <!-- 箭头4 -->
+        <line x1="420" y1="215" x2="450" y2="215" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+        <text x="435" y="207" text-anchor="middle" fill="#94a3b8" font-size="10">聚合</text>
+
+        <!-- 第五层: KnowledgeGraph -->
+        <g filter="url(#boxShadow)">
+          <rect x="460" y="185" width="150" height="60" rx="8" fill="#1a3328" stroke="#1a3328" stroke-width="1.5"/>
+          <text x="535" y="210" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">KnowledgeGraph</text>
+          <text x="535" y="230" text-anchor="middle" fill="#94a3b8" font-size="11">可视化缓存</text>
+        </g>
+
+        <!-- 说明文字 -->
+        <text x="320" y="265" text-anchor="middle" fill="#94a3b8" font-size="11">四层数据模型：从原始内容到知识图谱的完整数据流</text>
+      </svg>
+      <p style="margin:10px 0 0;font-size:13px;color:#667085;line-height:1.7;text-align:left;">
+        <strong>关键设计：</strong>WikiPage 分两种类型——Source Wiki（is_source_wiki=true，如 source-xxx）是原始内容的镜像；Concept Wiki（is_source_wiki=false，如 Cursor、小龙虾）是提取的概念页。双链从 Source Wiki 指向 Concept Wiki，最后聚合成 KnowledgeGraph 缓存供前端可视化。
+      </p>
+    </section>
+<p style="text-align:center;margin:36px 0;color:#cbd5e1;font-size:18px;letter-spacing:10px;">* * *</p>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 3：六步工程闭环</h2>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.75;color:#333333;">以下是我们处理 5248 篇 Source 时沉淀的工程流程，与 Part 2 的架构对应，纯粹是解决具体问题后的结果。</p>
+
+    <section style="margin:20px 0;padding:16px 20px 16px 20px;text-align:center;box-sizing:border-box;">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="LLM Wiki 六步闭环" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;background-color:#fafafa;border:1px solid #e8edf3;border-radius:8px;box-sizing:border-box;" font-family="-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif">
+        <defs>
+          <marker id="hub-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="#94a3b8" />
+          </marker>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+          </filter>
+        </defs>
+        <rect width="600" height="600" fill="#fafafa" rx="12" />
+        <circle cx="300" cy="300" r="140" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8 6" />
+        <g filter="url(#shadow)">
+          <!-- 1 上方 -->
+          <rect x="230" y="90" width="140" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="248" cy="106" r="10" fill="#c44536" />
+          <text x="248" y="110" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+          <text x="300" y="116" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">分类隔离</text>
+          <text x="300" y="135" text-anchor="middle" fill="#64748b" font-size="11">股票 / 装修 / 旅行</text>
+
+          <!-- 2 右上 -->
+          <rect x="430" y="196" width="130" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="448" cy="212" r="10" fill="#c44536" />
+          <text x="448" y="216" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">2</text>
+          <text x="495" y="220" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">幂等检查</text>
+          <text x="495" y="238" text-anchor="middle" fill="#64748b" font-size="11">有则跳过</text>
+
+          <!-- 3 右下 -->
+          <rect x="430" y="346" width="130" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="448" cy="362" r="10" fill="#c44536" />
+          <text x="448" y="366" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">3</text>
+          <text x="495" y="370" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">受限提取</text>
+          <text x="495" y="388" text-anchor="middle" fill="#64748b" font-size="11">最多5个概念</text>
+
+          <!-- 4 下方 -->
+          <rect x="230" y="452" width="140" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="248" cy="468" r="10" fill="#c44536" />
+          <text x="248" y="472" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">4</text>
+          <text x="300" y="478" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">建立链接</text>
+          <text x="300" y="497" text-anchor="middle" fill="#64748b" font-size="11">[[双链]] 关联</text>
+
+          <!-- 5 左下 -->
+          <rect x="40" y="346" width="130" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="58" cy="362" r="10" fill="#c44536" />
+          <text x="58" y="366" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5</text>
+          <text x="105" y="370" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">同步缓存</text>
+          <text x="105" y="388" text-anchor="middle" fill="#64748b" font-size="11">更新图谱表</text>
+
+          <!-- 6 左上 -->
+          <rect x="40" y="196" width="130" height="58" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" />
+          <circle cx="58" cy="212" r="10" fill="#c44536" />
+          <text x="58" y="216" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">6</text>
+          <text x="105" y="220" text-anchor="middle" fill="#1a1a1a" font-size="15" font-weight="700">清理噪声</text>
+          <text x="105" y="238" text-anchor="middle" fill="#64748b" font-size="11">删除低频实体</text>
+        </g>
+        <circle cx="300" cy="300" r="45" fill="#1a3328" filter="url(#shadow)" />
+        <text x="300" y="295" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">LLM Wiki</text>
+        <text x="300" y="315" text-anchor="middle" fill="#94a3b8" font-size="13">六步闭环</text>
+      </svg>
+      <p style="margin:10px 0 0;font-size:13px;color:#667085;line-height:1.7;text-align:left;">六步顺时针闭环：分类隔离 → 幂等检查 → 受限提取 → 建立链接 → 同步缓存 → 清理噪声。若后台不显示 SVG，请截屏该图插入。</p>
+    </section>
+
+    <h3 style="margin:22px 0 10px;font-size:16px;font-weight:700;color:#374151;">阶段 1：分类隔离</h3>
+    <ul style="margin:0 0 12px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">按领域标签对文章分组（股票/装修/旅行/技术）</li>
+      <li style="margin-bottom:8px;">每个领域单独提取实体，避免同名概念语义混乱</li>
+      <li style="margin-bottom:8px;">股票里的「龙头」≠ 装修里的「龙头」</li>
+    </ul>
+
+    <h3 style="margin:22px 0 10px;font-size:16px;font-weight:700;color:#374151;">阶段 2：受限提取</h3>
+    <ul style="margin:0 0 12px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">每篇最多提取 5 个核心概念</li>
+      <li style="margin-bottom:8px;">排除：人名、地名、日期、泛词（市场/生活/问题等）</li>
+      <li style="margin-bottom:8px;">避免一篇「离职感言」抽出 34 个人名的悲剧</li>
+    </ul>
+
+    <h3 style="margin:22px 0 10px;font-size:16px;font-weight:700;color:#374151;">阶段 3：建立链接</h3>
+    <ul style="margin:0 0 12px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">创建 WikiLinks（Source Wiki → Concept Wiki）</li>
+      <li style="margin-bottom:8px;">在内容中添加 <span style="background-color:#f1f5f9;padding:2px 6px;border-radius:3px;font-family:Consolas,Monaco,monospace;font-size:13px;color:#c44536;">[[双链]]</span>：用 <span style="background-color:#f1f5f9;padding:2px 6px;border-radius:3px;font-family:Consolas,Monaco,monospace;font-size:13px;color:#c44536;">(?&lt;!\[)name(?!\])</span> 匹配，排除已链接的</li>
+      <li style="margin-bottom:8px;">按名称长度降序匹配，避免短词覆盖长词</li>
+    </ul>
+
+    <h3 style="margin:22px 0 10px;font-size:16px;font-weight:700;color:#374151;">阶段 4：同步缓存</h3>
+    <ul style="margin:0 0 12px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">更新 KnowledgeGraph 缓存表：nodes、edges、统计、时间</li>
+      <li style="margin-bottom:8px;">只更新业务表不同步缓存 → 前端图谱空白</li>
+    </ul>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 4：7 个坑（实战记录）</h2>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.75;color:#333333;">以下问题都是实际遇到、且造成过数据混乱的真实情况：</p>
+
+    <table cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;margin:18px 0;font-size:15px;border:1px solid #e5e5e5;">
+      <thead>
+        <tr>
+          <th style="width:48px;background-color:#f1f5f9;padding:14px 10px;text-align:center;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">#</th>
+          <th style="background-color:#f1f5f9;padding:14px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">问题</th>
+          <th style="background-color:#f1f5f9;padding:14px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">后果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">1</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">不分类直接抽实体</p>
+            <p style="margin:0;">股票、装修、旅行混在一起处理</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">同名概念语义混乱，知识图谱不可用</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">2</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">一篇抽出几十个实体</p>
+            <p style="margin:0;">不加数量限制</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">一篇「离职感言」抽出 34 个人名，热门列表被淹没</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">3</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">热门阈值固定</p>
+            <p style="margin:0;">阈值设为 3，不区分数据量</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">新领域（如装修）概念引用少，全部被过滤，看不到</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">4</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">数据库更新，前端不显示</p>
+            <p style="margin:0;">只更新业务表，未同步缓存</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">KnowledgeGraph 缓存表未更新，前端图谱空白</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">5</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">重复处理</p>
+            <p style="margin:0;">多次运行脚本，不做幂等检查</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">实体数从 6000 涨到 12925，一半是一次性噪声</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;border-bottom:1px solid #e5e5e5;vertical-align:top;">6</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">中文正则匹配失效</p>
+            <p style="margin:0;">用 \b 匹配中文</p>
+          </td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">完全失效；已加 <span style="background-color:#f1f5f9;padding:2px 6px;font-family:Consolas,Monaco,monospace;font-size:13px;color:#c44536;">[[链接]]</span> 的被重复处理</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 10px;text-align:center;font-weight:700;color:#c44536;vertical-align:top;">7</td>
+          <td style="padding:14px 12px;vertical-align:top;color:#444444;">
+            <p style="margin:0 0 6px;font-weight:600;color:#7f1d1d;">数据只增不减</p>
+            <p style="margin:0;">没有清理机制</p>
+          </td>
+          <td style="padding:14px 12px;vertical-align:top;color:#444444;">低频噪声堆积，热门概念被淹没</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 5：当前成果</h2>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.75;color:#333333;">处理 5248 篇 Source 后的实际效果：</p>
+
+    <section style="margin:16px 0;padding:16px 18px;background-color:#f0fdf4;border-left:4px solid #16a34a;font-size:15px;line-height:1.75;color:#14532d;">
+      <p style="margin:0 0 8px;font-weight:700;">数据现状：</p>
+      <p style="margin:0;">3327 篇日记类 + 1095 篇股票日记 + 534 篇成长笔记 + 99 篇公众号文章 = 5248 篇 Source</p>
+    </section>
+
+    <p style="margin:16px 0 10px;font-size:16px;line-height:1.75;color:#333333;">成果截图请查看原文附件中的三张图片：</p>
+    <ul style="margin:0 0 12px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;"><strong style="color:#1a1a1a;">图 1：</strong>知识图谱热门概念 Top 20（上海、Cursor、小龙虾、松弛感等）</li>
+      <li style="margin-bottom:8px;"><strong style="color:#1a1a1a;">图 2：</strong>Wiki 详情页 - 「松弛感」主题聚合，展示相关概念和关联文章</li>
+      <li style="margin-bottom:8px;"><strong style="color:#1a1a1a;">图 3：</strong>知识图谱可视化 - 节点表示概念，连线表示关联关系</li>
+    </ul>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 6：基于这些数据能做什么</h2>
+
+    <p style="margin:0 0 8px;font-size:16px;line-height:1.75;color:#333333;"><strong style="color:#1a1a1a;">1. 主题溯源：追踪一个概念的真实演进</strong></p>
+    <ul style="margin:0 0 14px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">「Cursor」：从第一次听说（哪篇文章）→ 安装尝试 → 日常使用 → 深度依赖的完整时间线</li>
+      <li style="margin-bottom:8px;">「小龙虾」：从最初的概念 → 实际搭建 → 遇到问题的真实记录</li>
+      <li style="margin-bottom:8px;">「上海天文馆」：想去 → 规划 → 实际去过的决策过程</li>
+    </ul>
+
+    <p style="margin:0 0 8px;font-size:16px;line-height:1.75;color:#333333;"><strong style="color:#1a1a1a;">2. 交易复盘：把零散记录变成可回顾的决策链</strong></p>
+    <ul style="margin:0 0 14px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">某只股票（如「科陆」）的所有提及记录：什么时候第一次提到 → 买入理由 → 持仓过程 → 卖出/继续持有</li>
+      <li style="margin-bottom:8px;">特定交易模式（如「首板模式」）的实践记录：理论 → 尝试 → 结果 → 调整</li>
+      <li style="margin-bottom:8px;">发现重复犯的错误：哪些概念被反复提及但结果相似</li>
+    </ul>
+
+    <p style="margin:0 0 8px;font-size:16px;line-height:1.75;color:#333333;"><strong style="color:#1a1a1a;">3. 阅读清单：按主题聚合跨来源的内容</strong></p>
+    <ul style="margin:0 0 14px;padding-left:22px;font-size:16px;line-height:1.75;color:#333333;">
+      <li style="margin-bottom:8px;">「装修」主题：热河公众号文章 + 自己的装修决策记录 + 相关购物清单</li>
+      <li style="margin-bottom:8px;">「读书」主题：成长类笔记中提到的书籍 → 实际阅读记录 → 后续实践</li>
+      <li style="margin-bottom:8px;">「旅行」主题：所有地点相关的日记 + 攻略收藏 + 实际行程</li>
+    </ul>
+
+    <section style="margin:16px 0;padding:16px 18px;background-color:#f0fdf4;border-left:4px solid #16a34a;font-size:15px;line-height:1.75;color:#14532d;">
+      <p style="margin:0 0 8px;font-weight:700;">核心逻辑：</p>
+      <p style="margin:0;">不是「整理已有内容」，而是<strong style="color:#14532d;">「发现隐性连接」</strong>→ 跨时间、跨领域、跨媒介的概念关联。</p>
+    </section>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 7：ToB 场景 vs RAG</h2>
+
+    <table cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;margin:18px 0;font-size:15px;border:1px solid #e5e5e5;">
+      <thead>
+        <tr>
+          <th style="width:96px;background-color:#f1f5f9;padding:14px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">对比</th>
+          <th style="background-color:#f1f5f9;padding:14px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">传统 RAG</th>
+          <th style="background-color:#f1f5f9;padding:14px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #e5e5e5;">LLM Wiki</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;"><strong style="color:#1a1a1a;">检索方式</strong></td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">向量相似度，容易漏掉相关但表述不同的内容</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">概念图谱导航，找到「相关概念」的所有内容</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;"><strong style="color:#1a1a1a;">回答质量</strong></td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">单次检索，容易遗漏上下文</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">先聚类主题，再按主题生成，结构完整</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;"><strong style="color:#1a1a1a;">可解释性</strong></td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">黑盒，不知道用了哪些资料</td>
+          <td style="padding:14px 12px;border-bottom:1px solid #e5e5e5;vertical-align:top;color:#444444;">白盒，通过 <span style="background-color:#f1f5f9;padding:2px 6px;font-family:Consolas,Monaco,monospace;font-size:13px;color:#c44536;">[[双链]]</span> 可追溯来源</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 12px;vertical-align:top;color:#444444;"><strong style="color:#1a1a1a;">知识沉淀</strong></td>
+          <td style="padding:14px 12px;vertical-align:top;color:#444444;">用完即走，不产生资产</td>
+          <td style="padding:14px 12px;vertical-align:top;color:#444444;">生成 Concept Wiki，持续积累企业知识资产</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:28px 0 12px;font-size:18px;font-weight:700;color:#1a3328;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Part 8：给 AI 的提示词</h2>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.75;color:#333333;">复制以下内容，直接发给 AI 让它帮你实现：</p>
+
+    <section style="margin:16px 0;padding:16px;background-color:#1f2937;color:#f3f4f6;border-radius:6px;font-size:13px;line-height:1.65;font-family:Consolas,Monaco,monospace;white-space:pre-wrap;word-break:break-word;">请帮我构建 LLM Wiki 知识图谱，按以下流程执行：
+
+【阶段1：分类隔离】
+- 按领域标签（股票/装修/旅行/技术）对文章分组
+- 每个领域单独提取实体，不跨域关联
+
+【阶段2：幂等检查】
+- 检查 Source 是否已有 WikiPage 且存在出链
+- 有则跳过，无则继续
+
+【阶段3：受限提取】
+- 每篇最多提取 5 个核心概念
+- 排除：人名、地名、日期、泛词（市场/生活/问题等）
+
+【阶段4：建立链接】
+- 创建 WikiLinks（Source Wiki → Concept Wiki）
+- 在内容中添加 [[双链]]：用 (?&lt;!\[)name(?!\]) 匹配，排除已链接的
+- 按名称长度降序匹配，避免短词覆盖长词
+
+【阶段5：同步缓存】
+- 更新 KnowledgeGraph 缓存表：nodes、edges、统计、时间
+
+【阶段6：清理噪声】
+- 删除引用数 &lt; 2 的低频实体
+- 执行前先输出统计报告
+
+【输出】
+- 处理篇数、跳过篇数、提取实体数、创建链接数、建议清理数</section>
+
+    <section style="margin-top:28px;padding-top:18px;border-top:1px solid #e5e5e5;">
+      <p style="margin:0;font-size:15px;line-height:1.75;color:#5c5c5c;"><strong style="color:#333333;">一句话：</strong>LLM Wiki 不只是检索，是让知识「可生长」。个人用来连接过去，企业用来沉淀资产。</p>
+    </section>
+
+    <p style="margin:24px 0 0;text-align:center;font-size:13px;color:#9a9a9a;">— 知识即图谱 wuyz_001 —</p>
+  </section>
+</body>
+</html>

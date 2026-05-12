@@ -109,11 +109,28 @@ export class Publisher extends BasePublisher {
   private async fillTitle(): Promise<void> {
     this.logger.info('填写标题...');
 
-    const titleInput = await this.page!.$('#title');
-    if (titleInput && await titleInput.isVisible().catch(() => false)) {
-      await titleInput.fill(this.config.article.title);
-      this.logger.info('标题填写完成');
-      return;
+    // 先用 evaluate 检查 #title 是否存在
+    const titleExists = await this.page!.evaluate(() => {
+      const el = document.querySelector('#title');
+      return { exists: !!el, tag: el?.tagName, visible: el ? (el as HTMLElement).offsetParent !== null : false };
+    });
+    this.logger.info(`#title 检查: ${JSON.stringify(titleExists)}`);
+
+    if (titleExists.exists) {
+      const filled = await this.page!.evaluate((title) => {
+        const el = document.querySelector('#title') as HTMLTextAreaElement | HTMLInputElement | null;
+        if (el) {
+          el.value = title;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+          return true;
+        }
+        return false;
+      }, this.config.article.title);
+      if (filled) {
+        this.logger.info('标题填写完成');
+        return;
+      }
     }
 
     throw new Error('未找到标题输入框');
